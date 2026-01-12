@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bluewave Car Rentals</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+html { scroll-behavior: smooth; }
+body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: linear-gradient(135deg,#1e3c72,#6a11cb); color: #fff; }
+.container { flex: 1; max-width:1200px; margin:auto; padding:20px; }
+nav { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:rgba(0,0,0,.45); position:sticky; top:0; backdrop-filter:blur(8px); z-index:100; }
+.logo{font-size:22px;font-weight:700}
+.menu a{margin-left:25px;color:#fff;text-decoration:none;cursor:pointer}
+.menu a:hover{color:#00eaff}
+.hero{text-align:center;padding:70px 20px 40px}
+.hero h1{font-size:40px}
+.section-title{text-align:center;font-size:28px;margin:40px 0 20px}
+.category{margin-bottom:40px}
+.cars{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:25px}
+.car-card{background:rgba(255,255,255,.12);border-radius:16px;overflow:hidden;text-align:center;padding-bottom:15px;box-shadow:0 10px 30px rgba(0,0,0,.35);cursor:pointer;transition:all 0.3s ease;}
+.car-card img{width:100%;height:200px;object-fit:cover}
+.car-name{font-size:20px;margin-top:12px}
+.price{color:#ffd700;margin:8px 0}
+.book-btn{background:linear-gradient(135deg,#00c6ff,#0072ff);border:none;padding:10px 22px;border-radius:22px;color:#fff;font-weight:700;cursor:pointer}
+.car-card.selected { border: 3px solid #00eaff; box-shadow: 0 15px 35px rgba(0,255,255,0.4); transform: scale(1.05); transition: all 0.3s ease; }
+.booking{background:rgba(0,0,0,.35);padding:30px;border-radius:18px;margin-top:40px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.booking h3{text-align:center;margin-top:0}
+.booking label{display:block;margin-top:15px}
+.booking input,.booking select{width:100%;padding:10px;border-radius:8px;border:none;margin-top:5px}
+.total{margin-top:20px;font-size:20px;text-align:center;color:#ffd700;transition: all 0.5s ease;}
+.total.animate{transform: scale(1.2); color: #00eaff;}
+.pay-btn{display:block;margin:20px auto 0;color:#fff;border:none;padding:14px 26px;border-radius:30px;font-size:16px;font-weight:700;cursor:pointer;background:#ff9800}
+#popup { position:fixed; top:-100px; left:50%; transform:translateX(-50%); background:#ff9800; color:#fff; padding:15px 25px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.3); z-index:9999; font-weight:700; transition: top 0.5s ease, opacity 0.5s ease; opacity:0; }
+#admin-toggle { display:block; margin:30px auto 0; background:#00c6ff; color:#000; border:none; padding:12px 20px; border-radius:12px; cursor:pointer; font-weight:700; font-size:16px; }
+#admin-panel { display:none; background:rgba(0,0,0,.85); padding:25px; border-radius:16px; margin:20px auto; max-width:600px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.5); }
+#admin-panel h3{margin-top:0;}
+#admin-panel input, #admin-panel select{width:90%;margin:10px 0;padding:10px;border-radius:8px;border:none;}
+#admin-panel button{width:95%;padding:10px;border:none;border-radius:8px;background:#00eaff;color:#000;font-weight:700;cursor:pointer; margin-top:5px;}
+#booking-table{width:100%; border-collapse: collapse; margin-top:15px;}
+#booking-table th, #booking-table td{border:1px solid #fff; padding:8px; text-align:center;}
+#booking-table th{background:rgba(255,255,255,0.2);}
+.blocked-dates{margin-top:15px;font-size:14px; color:#ffd700; text-align:left;}
+footer { margin-top: 20px; padding: 25px 15px; background: linear-gradient(135deg, #1e3c72, #6a11cb); text-align: center; border-radius: 16px 16px 0 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); position: sticky; bottom: 0; width: 100%; }
+footer p { color: #fff; font-weight: 700; font-size: 16px; background: rgba(0,0,0,0.25); display: inline-block; padding: 6px 15px; border-radius: 12px; transition: all 0.3s ease; }
+footer p:hover { background: rgba(0,0,0,0.4); box-shadow: 0 0 15px #00eaff; transform: translateY(-2px); }
+@media(max-width:768px){ .cars{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));} footer p{font-size:14px;padding:5px 12px;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Bluewave Car Rentals</div>
+  <div class="menu">
+    <a href="#home">Home</a>
+    <a href="#booking">Booking</a>
+    <a href="#services">Services</a>
+  </div>
+</nav>
+
+<section class="hero" id="home">
+<h1>Smart Car Rental Booking</h1>
+<p>Select dates, get instant pricing & confirm via Mpesa</p>
+</section>
+
+<div class="container">
+
+<div class="category">
+<h2 class="section-title">Economy & Sedans</h2>
+<div class="cars">
+<div class="car-card">
+<div class="car-name">Toyota Axio</div>
+<div class="price">KES 4,500 / day</div>
+<button class="book-btn">Book</button>
+</div>
+<div class="car-card">
+<div class="car-name">Nissan AD Wagon</div>
+<div class="price">KES 7,000 / day</div>
+<button class="book-btn">Book</button>
+</div>
+<div class="car-card">
+<div class="car-name">Mazda Demio</div>
+<div class="price">KES 4,000 / day</div>
+<button class="book-btn">Book</button>
+</div>
+</div>
+</div>
+
+<div class="category">
+<h2 class="section-title">SUVs</h2>
+<div class="cars">
+<div class="car-card">
+<div class="car-name">Subaru Forester</div>
+<div class="price">KES 8,000 / day</div>
+<button class="book-btn">Book</button>
+</div>
+<div class="car-card">
+<div class="car-name">Toyota Prado</div>
+<div class="price">KES 15,000 / day</div>
+<button class="book-btn">Book</button>
+</div>
+<div class="car-card">
+<div class="car-name">Toyota Noah</div>
+<div class="price">KES 7,500 / day</div>
+<button class="book-btn">Book</button>
+</div>
+</div>
+</div>
+
+<div class="booking" id="booking">
+<h3>Booking Form</h3>
+<label>Car</label>
+<input id="car" readonly>
+<label>Pick-up Date</label>
+<input id="start" placeholder="Select pickup date">
+<label>Return Date</label>
+<input id="end" placeholder="Select return date">
+<label>Price Per Day</label>
+<input id="price" readonly>
+<div class="total" id="total">Total: KES 0</div>
+<label>Mpesa Phone Number</label>
+<input id="phone" placeholder="2547XXXXXXXX">
+<button class="pay-btn" onclick="bookCar()">Book & Pay</button>
+</div>
+
+<section class="booking" id="services">
+<h3>Our Services</h3>
+<p style="text-align:center;">
+Fast. Easy. Reliable.<br>
+Choose from a wide range of latest model cars.<br>
+Book instantly via Mpesa.<br>
+Transparent pricing, flexible rental options, and fully maintained vehicles.
+</p>
+</section>
+
+<button id="admin-toggle">Admin Login</button>
+<div id="admin-panel">
+<h3>Admin Dashboard</h3>
+<input type="text" id="admin-user" placeholder="Username">
+<input type="password" id="admin-pass" placeholder="Password">
+<button onclick="adminLogin()">Login</button>
+
+<div id="admin-dashboard" style="display:none; margin-top:15px;">
+<h4>Block Dates for Car</h4>
+<select id="block-car">
+<option value="">Select Car</option>
+<option>Toyota Axio</option>
+<option>Nissan AD Wagon</option>
+<option>Mazda Demio</option>
+<option>Subaru Forester</option>
+<option>Toyota Prado</option>
+<option>Toyota Noah</option>
+</select>
+<input type="date" id="block-date">
+<button onclick="blockDate()">Block Date</button>
+<div class="blocked-dates" id="blocked-dates"></div>
+
+<h4>Bookings</h4>
+<table id="booking-table">
+<tr>
+<th>Car</th><th>Pickup</th><th>Return</th><th>Phone</th><th>Total</th><th>Confirmed</th><th>Action</th>
+</tr>
+</table>
+</div>
+</div>
+
+<footer>
+  <p>© 2026 All rights reserved</p>
+</footer>
+
+<div id="popup">Till Number copied!</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+const prices = {
+  "Toyota Axio": 4500,
+  "Nissan AD Wagon": 3500,
+  "Mazda Demio": 4000,
+  "Subaru Forester": 6500,
+  "Toyota Prado": 15000,
+  "Toyota Noah": 7500
+};
+let bookings = [];
+let blockedDates = {};
+
+const startPicker = flatpickr("#start",{minDate:"today",dateFormat:"Y-m-d",onChange:updateTotal});
+const endPicker = flatpickr("#end",{minDate:"today",dateFormat:"Y-m-d",onChange:updateTotal});
+
+document.querySelectorAll('.book-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const carName = btn.parentElement.querySelector('.car-name').innerText;
+    selectCar(carName);
+  });
+});
+
+function selectCar(name){
+  document.getElementById('car').value = name;
+  document.getElementById('price').value = "KES " + prices[name];
+  document.querySelectorAll('.car-card').forEach(card=>card.classList.remove('selected'));
+  document.querySelectorAll('.car-card').forEach(card=>{
+    if(card.querySelector('.car-name').innerText===name){
+      card.classList.add('selected');
+    }
+  });
+  updateTotal();
+}
+
+function updateTotal(){
+  const car = document.getElementById('car').value;
+  const start = document.getElementById('start').value;
+  const end = document.getElementById('end').value;
+  if(car && start && end){
+    const s = new Date(start), e = new Date(end);
+    let days = Math.ceil((e-s)/(1000*60*60*24)) + 1;
+    days = days > 0 ? days : 0;
+    const totalAmount = days * prices[car];
+    const totalEl = document.getElementById('total');
+    totalEl.innerText = "Total: KES " + totalAmount;
+    totalEl.classList.add('animate');
+    setTimeout(()=>totalEl.classList.remove('animate'),500);
+  }
+}
+
+function bookCar(){
+  const car = document.getElementById('car').value;
+  const start = document.getElementById('start').value;
+  const end = document.getElementById('end').value;
+  const phone = document.getElementById('phone').value;
+  if(!car || !start || !end || !phone){ alert("Fill all fields!"); return; }
+
+  if(blockedDates[car]){
+    const s = new Date(start), e = new Date(end);
+    if(blockedDates[car].some(d=>{ const bd = new Date(d); return s <= bd && e >= bd; })){
+      alert("Selected dates blocked for this car!"); return;
+    }
+  }
+
+  const totalText = document.getElementById('total').innerText.replace("Total: KES ","");
+  bookings.push({car,start,end,phone,total:totalText,confirmed:false});
+  updateBookingTable();
+
+  // Copy till number
+  navigator.clipboard.writeText("9824325");
+  const popup = document.getElementById('popup');
+  popup.innerText = "Till Number copied!";
+  popup.style.top="20px"; popup.style.opacity="1";
+  setTimeout(()=>{ popup.style.top="-100px"; popup.style.opacity="0"; },2000);
+
+  // WhatsApp message with full booking details
+  const message = `Hello, I would like to confirm my booking:\nCar: ${car}\nPickup: ${start}\nReturn: ${end}\nTotal: KES ${totalText}\nMpesa Phone: ${phone}`;
+  const waLink = `https://wa.me/254790306383?text=${encodeURIComponent(message)}`;
+  window.open(waLink, "_blank");
+}
+
+function updateBookingTable(){
+  const table = document.getElementById('booking-table');
+  table.innerHTML = "<tr><th>Car</th><th>Pickup</th><th>Return</th><th>Phone</th><th>Total</th><th>Confirmed</th><th>Action</th></tr>";
+  bookings.forEach((b,i)=>{
+    const row = table.insertRow();
+    row.insertCell(0).innerText=b.car;
+    row.insertCell(1).innerText=b.start;
+    row.insertCell(2).innerText=b.end;
+    row.insertCell(3).innerText=b.phone;
+    row.insertCell(4).innerText=b.total;
+    row.insertCell(5).innerText=b.confirmed?"Yes":"No";
+
+    const actionCell = row.insertCell(6);
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.innerText="Confirm";
+    confirmBtn.style.marginRight="5px";
+    confirmBtn.onclick=()=>{ bookings[i].confirmed=true; updateBookingTable(); };
+    actionCell.appendChild(confirmBtn);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerText="Delete";
+    deleteBtn.onclick=()=>{ if(confirm("Delete this booking?")){ bookings.splice(i,1); updateBookingTable(); } };
+    actionCell.appendChild(deleteBtn);
+  });
+}
+
+function blockDate(){
+  const car = document.getElementById('block-car').value;
+  const date = document.getElementById('block-date').value;
+  if(!car || !date) { alert("Select car and date"); return; }
+  if(!blockedDates[car]) blockedDates[car]=[];
+  blockedDates[car].push(date);
+  document.getElementById('blocked-dates').innerText="Blocked dates:\n"+JSON.stringify(blockedDates);
+  alert("Date blocked for "+car);
+}
+
+document.getElementById('admin-toggle').addEventListener('click', ()=>{
+  const panel = document.getElementById('admin-panel');
+  panel.style.display = panel.style.display==='block'?'none':'block';
+});
+
+function adminLogin(){
+  const user=document.getElementById('admin-user').value;
+  const pass=document.getElementById('admin-pass').value;
+  if(user==="admin" && pass==="1945"){
+    alert("Admin login successful!");
+    document.getElementById('admin-dashboard').style.display='block';
+  } else alert("Invalid credentials");
+}
+</script>
+</body>
+</html>
